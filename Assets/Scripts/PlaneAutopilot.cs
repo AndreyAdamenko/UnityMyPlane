@@ -21,10 +21,12 @@ public class PlaneAutopilot : MonoBehaviour
     private Navigator navigator;
 
     [SerializeField]
-    [Range(-10, 10)]
+    [Range(-1, 1)]
     private float _P, _I, _D;
 
     private PID _enginePID;
+
+    float curThrottle = 0f;
 
     public string CurModeTitle = "Hold";
     private AutopilotMode _curMode = AutopilotMode.Hold;
@@ -43,7 +45,7 @@ public class PlaneAutopilot : MonoBehaviour
     private void Awake()
     {
         _enginePID = new PID(_P, _I, _D);
-        
+
         _rb = GetComponent<Rigidbody>();
 
         airPlane = GetComponent<AirPlane>();
@@ -70,7 +72,7 @@ public class PlaneAutopilot : MonoBehaviour
             {
                 CurMode = AutopilotMode.Turn;
             }
-            else if ((_curMode == AutopilotMode.Turn && value < 1f) || (_curMode == AutopilotMode.Hold && value > 1f) )
+            else if ((_curMode == AutopilotMode.Turn && value < 2f) || (_curMode == AutopilotMode.Hold && value > 2f))
             {
                 CurMode = AutopilotMode.Correction;
             }
@@ -94,7 +96,9 @@ public class PlaneAutopilot : MonoBehaviour
 
         var speedError = needSpeed - airPlane.frontSpeed;
 
-        airPlane.SetThrottle(_enginePID.GetOutput(speedError, Time.fixedDeltaTime) / 100f);
+        curThrottle = _enginePID.GetOutput(speedError, Time.fixedDeltaTime);
+
+        airPlane.SetThrottle(curThrottle);
     }
 
     private float GetRoll()

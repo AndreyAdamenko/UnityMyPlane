@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.4497037, g: 0.49686456, b: 0.5600282, a: 1}
+  m_IndirectSpecularColor: {r: 0.44970435, g: 0.49686527, b: 0.56002873, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -2089,14 +2089,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 93fbdb1abe3bd444d9dd79bcb9c54bda, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  needRoll: -0
+  needRoll: 0
   needPitch: 6
   needRudders: 0
   needSpeed: 50
-  _P: 1.5
-  _I: 0.8
-  _D: 0.8
-  CurModeTitle: Hold
+  _P: 0.22
+  _I: 0.04
+  _D: 0.1
+  CurModeTitle: Turn
 --- !u!114 &2092713671
 MonoBehaviour:
   m_ObjectHideFlags: 0

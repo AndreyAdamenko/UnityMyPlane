@@ -13,7 +13,7 @@ public class AirFriction : RigidbodyFinder
     [Tooltip("Lift coefficient curve.")]
     public WingCurves wing;
 
-    AudioSource audio = null;
+    AudioSource airAudio = null;
 
     Vector3 oldPos = Vector3.zero;
 
@@ -52,7 +52,7 @@ public class AirFriction : RigidbodyFinder
 
         air = GameObject.Find("Air").GetComponent<Air>();
 
-        audio = GetComponent<AudioSource>();
+        airAudio = GetComponent<AudioSource>();
     }
 
     // Update is called once per frame
@@ -79,7 +79,7 @@ public class AirFriction : RigidbodyFinder
 
         GetForce();
 
-        if (audio == null) return;
+        if (airAudio == null) return;
 
         float velocity = _rb.velocity.magnitude;
 
@@ -126,19 +126,19 @@ public class AirFriction : RigidbodyFinder
 
         if (volume <= 0.05f)
         {
-            if (audio.isPlaying) audio.Stop();
+            if (airAudio.isPlaying) airAudio.Stop();
         }
 
         if (pitch > 0.05f)
         {
-            if (!audio.isPlaying) audio.Play();
+            if (!airAudio.isPlaying) airAudio.Play();
         }
 
-        if (audio.isPlaying)
+        if (airAudio.isPlaying)
         {
-            audio.volume = volume;
+            airAudio.volume = volume;
 
-            audio.pitch = pitch;
+            airAudio.pitch = pitch;
         }
     }
 

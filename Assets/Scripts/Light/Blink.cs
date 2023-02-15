@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Blink : MonoBehaviour
 {
-    Light light = null;
+    Light blinkLight = null;
 
     public float maxIntensity = 1f;
 
@@ -18,7 +18,7 @@ public class Blink : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        light = GetComponent<Light>();
+        blinkLight = GetComponent<Light>();
 
         curIntensity = maxIntensity;
     }
@@ -29,6 +29,6 @@ public class Blink : MonoBehaviour
         
         curIntensity = ((sin + 1f) / 2f) * maxIntensity;
 
-        light.intensity = curIntensity;
+        blinkLight.intensity = curIntensity;
     }
 }

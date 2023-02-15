@@ -1,8 +1,9 @@
-﻿using System.Collections;
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlaneAutopilot : MonoBehaviour
+public class PlaneAutopilot2 : MonoBehaviour
 {
     float selectedAltitude = 0f;
 
@@ -20,11 +21,18 @@ public class PlaneAutopilot : MonoBehaviour
 
     private Navigator navigator;
 
+    //[SerializeField]
+    //[Range(-1, 1)]
+    //private float _P, _I, _D;
+
     [SerializeField]
-    [Range(-1, 1)]
-    private float _P, _I, _D;
+    public PidParameters engeenPidParameters;
+
+    [SerializeField]
+    public PidParameters elevatorPidParameters;
 
     private PID _enginePID;
+    private PID _elevatorPID;
 
     float curThrottle = 0f;
 
@@ -44,7 +52,15 @@ public class PlaneAutopilot : MonoBehaviour
 
     private void Awake()
     {
-        _enginePID = new PID(_P, _I, _D);
+        _enginePID = new PID(
+            engeenPidParameters.P,
+            engeenPidParameters.I,
+            engeenPidParameters.D);
+
+        _elevatorPID = new PID(
+            elevatorPidParameters.P,
+            elevatorPidParameters.I,
+            elevatorPidParameters.D);
 
         _rb = GetComponent<Rigidbody>();
 
@@ -55,9 +71,13 @@ public class PlaneAutopilot : MonoBehaviour
 
     private void FixedUpdate()
     {
-        _enginePID.Kp = _P;
-        _enginePID.Ki = _I;
-        _enginePID.Kd = _D;
+        _enginePID.Kp = engeenPidParameters.P;
+        _enginePID.Ki = engeenPidParameters.I;
+        _enginePID.Kd = engeenPidParameters.D;
+
+        _elevatorPID.Kp = elevatorPidParameters.P;
+        _elevatorPID.Ki = elevatorPidParameters.I;
+        _elevatorPID.Kd = elevatorPidParameters.D;
 
 
         if (navigator != null)
@@ -84,6 +104,11 @@ public class PlaneAutopilot : MonoBehaviour
             float roll = GetRoll();
 
             needRoll = positive ? roll * -1 : roll;
+
+
+            var elevatorError = navigator.CurPoint.position.y - transform.position.y;
+
+            needPitch = _elevatorPID.GetOutput(elevatorError, Time.fixedDeltaTime);
 
             //needRudders = positive ? rudder * -1 : rudder;
         }
@@ -124,5 +149,18 @@ public class PlaneAutopilot : MonoBehaviour
         Turn,
         Correction,
         Hold
+    }
+
+    [Serializable]
+    public class PidParameters
+    {
+        [Range(-1, 5)]
+        public float P;
+
+        [Range(-1, 5)]
+        public float I;
+
+        [Range(-1, 5)]
+        public float D;
     }
 }

@@ -50,12 +50,21 @@ public class Navigator : MonoBehaviour
             return float.MaxValue;
     }
 
-    public float GetHorizontalAngle()
+    public float GetHorizontalAngle(Transform pointTransform)
     {
-        if (CurPoint == null) return 0;
+        if (pointTransform == null) return 0;
 
         var vectorToTarget = CurPoint.transform.position - transform.position;
 
         return AngleUtil.AngleOffAroundAxis(vectorToTarget, _rb.velocity.normalized, Vector3.up);
+    }
+
+    public float GetVerticalAngle(Transform pointTransform)
+    {
+        if (pointTransform == null) return 0;
+
+        var vectorToTarget = CurPoint.transform.position - transform.position;
+
+        return AngleUtil.AngleOffAroundAxis(vectorToTarget, _rb.velocity.normalized, Vector3.left);
     }
 }

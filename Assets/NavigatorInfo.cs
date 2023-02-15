@@ -21,7 +21,7 @@ public class NavigatorInfo : MonoBehaviour
     private Text titleText;
 
     private string _title;
-    private string title
+    private string Title
     {
         get => _title;
 
@@ -33,7 +33,7 @@ public class NavigatorInfo : MonoBehaviour
     }
 
     private float _horizontalAngle;
-    private float horizontalAngle
+    private float HorizontalAngle
     {
         get => _horizontalAngle;
 
@@ -45,19 +45,19 @@ public class NavigatorInfo : MonoBehaviour
     }
 
     private float _verticalAngle;
-    private float verticalAngle
+    private float VerticalAngle
     {
         get => _verticalAngle;
 
         set
         {
             _verticalAngle = value;
-            verticalAngleText.text = $"HA: {_verticalAngle.ToString("0.00")}";
+            verticalAngleText.text = $"VA: {_verticalAngle.ToString("0.00")}";
         }
     }
 
     private float _distance;
-    private float distance
+    private float Distance
     {
         get => _distance;
 
@@ -77,8 +77,9 @@ public class NavigatorInfo : MonoBehaviour
     {
         if (_navigator == null) return;
 
-        distance = _navigator.GetDistance();
-        horizontalAngle = _navigator.GetHorizontalAngle();
-        title = _navigator.CurPoint == null ? "---" : _navigator.CurPoint.gameObject.name;
+        Distance = _navigator.GetDistance();
+        HorizontalAngle = _navigator.GetHorizontalAngle(_navigator.CurPoint);
+        VerticalAngle = _navigator.GetVerticalAngle(_navigator.CurPoint);
+        Title = _navigator.CurPoint == null ? "---" : _navigator.CurPoint.gameObject.name;
     }
 }

@@ -827,7 +827,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 709017953}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 9030, y: 50, z: 9016}
+  m_LocalPosition: {x: 9030, y: 150, z: 9016}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -1447,7 +1447,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1371551981}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1012, y: 50, z: 9038}
+  m_LocalPosition: {x: 1012, y: 150, z: 9038}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -1794,7 +1794,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1888114824}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 4996, y: 50, z: 5680}
+  m_LocalPosition: {x: 4996, y: 350, z: 5680}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -2110,17 +2110,22 @@ MonoBehaviour:
   m_GameObject: {fileID: 2092713659}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 93fbdb1abe3bd444d9dd79bcb9c54bda, type: 3}
+  m_Script: {fileID: 11500000, guid: 7b0bd5d9d3fbaae40863e41a7c089cac, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  needRoll: 0
+  needRoll: -0
   needPitch: 6
   needRudders: 0
-  needSpeed: 50
-  _P: 0.22
-  _I: 0.04
-  _D: 0.1
-  CurModeTitle: Turn
+  needSpeed: 65
+  engeenPidParameters:
+    P: 0.22
+    I: 0.04
+    D: 0.1
+  elevatorPidParameters:
+    P: 0.6
+    I: 0.12
+    D: 0.15
+  CurModeTitle: Hold
 --- !u!114 &2092713671
 MonoBehaviour:
   m_ObjectHideFlags: 0

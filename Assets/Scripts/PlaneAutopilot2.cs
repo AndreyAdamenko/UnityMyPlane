@@ -26,10 +26,10 @@ public class PlaneAutopilot2 : MonoBehaviour
     //private float _P, _I, _D;
 
     [SerializeField]
-    public PidParameters engeenPidParameters;
+    public PID.PidParameters engeenPidParameters;
 
     [SerializeField]
-    public PidParameters elevatorPidParameters;
+    public PID.PidParameters elevatorPidParameters;
 
     private PID _enginePID;
     private PID _elevatorPID;
@@ -49,18 +49,18 @@ public class PlaneAutopilot2 : MonoBehaviour
         }
     }
 
+    public float VelocityVerticalAngle;
+
+    private void Update()
+    {
+        VelocityVerticalAngle = airPlane.GetVelocityVerticalAngle();
+    }
 
     private void Awake()
     {
-        _enginePID = new PID(
-            engeenPidParameters.P,
-            engeenPidParameters.I,
-            engeenPidParameters.D);
+        _enginePID = new PID(engeenPidParameters, 1f);
 
-        _elevatorPID = new PID(
-            elevatorPidParameters.P,
-            elevatorPidParameters.I,
-            elevatorPidParameters.D);
+        _elevatorPID = new PID(elevatorPidParameters, 0.1f);
 
         _rb = GetComponent<Rigidbody>();
 
@@ -71,15 +71,6 @@ public class PlaneAutopilot2 : MonoBehaviour
 
     private void FixedUpdate()
     {
-        _enginePID.Kp = engeenPidParameters.P;
-        _enginePID.Ki = engeenPidParameters.I;
-        _enginePID.Kd = engeenPidParameters.D;
-
-        _elevatorPID.Kp = elevatorPidParameters.P;
-        _elevatorPID.Ki = elevatorPidParameters.I;
-        _elevatorPID.Kd = elevatorPidParameters.D;
-
-
         if (navigator != null)
         {
             var horizontalAngleOnPoint = navigator.GetHorizontalAngle(navigator.CurPoint);
@@ -92,7 +83,7 @@ public class PlaneAutopilot2 : MonoBehaviour
             {
                 CurMode = AutopilotMode.Turn;
             }
-            else if ((_curMode == AutopilotMode.Turn && value < 2f) || (_curMode == AutopilotMode.Hold && value > 2f))
+            else if ((CurMode == AutopilotMode.Turn && value < 2f) || (CurMode == AutopilotMode.Hold && value > 2f))
             {
                 CurMode = AutopilotMode.Correction;
             }
@@ -105,10 +96,8 @@ public class PlaneAutopilot2 : MonoBehaviour
 
             needRoll = positive ? roll * -1 : roll;
 
+            needPitch = GetNeedPitch2();
 
-            var elevatorError = navigator.CurPoint.position.y - transform.position.y;
-
-            needPitch = _elevatorPID.GetOutput(elevatorError, Time.fixedDeltaTime);
 
             //needRudders = positive ? rudder * -1 : rudder;
         }
@@ -119,9 +108,7 @@ public class PlaneAutopilot2 : MonoBehaviour
 
         //airPlane.SetRudders(-needRudders);
 
-        var speedError = needSpeed - airPlane.frontSpeed;
-
-        curThrottle = _enginePID.GetOutput(speedError, Time.fixedDeltaTime);
+        curThrottle = GetThrottle();
 
         airPlane.SetThrottle(curThrottle);
     }
@@ -144,23 +131,64 @@ public class PlaneAutopilot2 : MonoBehaviour
         }
     }
 
+    private float GetNeedPitch()
+    {
+        if (CurMode == AutopilotMode.Turn)
+            return 8;
+        else
+        {
+            float elevatorError = navigator.CurPoint.position.y - transform.position.y;
+
+            var pidValue = _elevatorPID.GetOutput(elevatorError, Time.fixedDeltaTime);
+
+            return Mathf.Abs(pidValue) > 35 ? 35 * Mathf.Sign(pidValue) : pidValue;
+        }
+    }
+
+    private float GetNeedPitch2()
+    {
+        if (CurMode == AutopilotMode.Turn)
+            return 8;
+        else
+        {
+            var planeVelocityVerticalAngle = airPlane.GetVelocityVerticalAngle();
+            var pointVerticalAngle = navigator.GetVerticalAngle(navigator.CurPoint);
+            
+            float angleError = (planeVelocityVerticalAngle - pointVerticalAngle);
+
+            var pidValue = _elevatorPID.GetOutput(-angleError, Time.fixedDeltaTime);
+
+            return Mathf.Abs(pidValue) > 35 ? 35 * Mathf.Sign(pidValue) : pidValue;
+
+            //return navigator.GetVerticalAngle(navigator.CurPoint);
+        }
+    }
+
+    private float GetNeedPitch3()
+    {
+        if (CurMode == AutopilotMode.Turn)
+            return 8;
+        else
+        {
+            float elevatorError = navigator.CurPoint.position.y - transform.position.y;
+
+            var pidValue = _elevatorPID.GetOutput(elevatorError, Time.fixedDeltaTime);
+
+            return Mathf.Abs(pidValue) > 35 ? 35 * Mathf.Sign(pidValue) : pidValue;
+        }
+    }
+
+    private float GetThrottle()
+    {
+        float speedError = needSpeed - airPlane.frontSpeed;
+
+        return _enginePID.GetOutput(speedError, Time.fixedDeltaTime);
+    }
+
     public enum AutopilotMode
     {
         Turn,
         Correction,
         Hold
-    }
-
-    [Serializable]
-    public class PidParameters
-    {
-        [Range(-1, 5)]
-        public float P;
-
-        [Range(-1, 5)]
-        public float I;
-
-        [Range(-1, 5)]
-        public float D;
     }
 }

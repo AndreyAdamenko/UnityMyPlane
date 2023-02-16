@@ -6,59 +6,19 @@ using System.Collections;
 public class PID
 {
     private float _p, _i, _d;
-    private float _kp, _ki, _kd;
     private float _prevError;
 
-    /// <summary>
-    /// Constant proportion
-    /// </summary>
-    public float Kp
-    {
-        get
-        {
-            return _kp;
-        }
-        set
-        {
-            _kp = value;
-        }
-    }
+    private float _multiplier;
 
-    /// <summary>
-    /// Constant integral
-    /// </summary>
-    public float Ki
-    {
-        get
-        {
-            return _ki;
-        }
-        set
-        {
-            _ki = value;
-        }
-    }
+    public PidParameters pidParameters;
 
-    /// <summary>
-    /// Constant derivative
-    /// </summary>
-    public float Kd
+    public PID(PidParameters pidParameters, float multiplier)
     {
-        get
-        {
-            return _kd;
-        }
-        set
-        {
-            _kd = value;
-        }
-    }
-
-    public PID(float p, float i, float d)
-    {
-        _kp = p;
-        _ki = i;
-        _kd = d;
+        _multiplier = multiplier;
+        this.pidParameters = pidParameters;
+        _p = pidParameters.P * multiplier;
+        _i = pidParameters.I * multiplier;
+        _d = pidParameters.D * multiplier;
     }
 
     /// <summary>
@@ -75,6 +35,21 @@ public class PID
         _d = (_p - _prevError) / deltaTime;
         _prevError = currentError;
 
-        return _p * Kp + _i * Ki + _d * Kd;
+        return _p * (pidParameters.P * _multiplier) + 
+               _i * (pidParameters.I * _multiplier) + 
+               _d * (pidParameters.D * _multiplier);
+    }
+
+    [Serializable]
+    public class PidParameters
+    {
+        [Range(-1, 5)]
+        public float P;
+
+        [Range(-1, 5)]
+        public float I;
+
+        [Range(-1, 5)]
+        public float D;
     }
 }

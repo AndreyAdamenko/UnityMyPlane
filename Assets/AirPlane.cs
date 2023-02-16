@@ -87,6 +87,19 @@ public class AirPlane : MonoBehaviour
         _lastPitch = pitch;
     }
 
+    public float GetVelocityVerticalAngle()
+    {
+        Vector3 flatForward = new Vector3(_rb.velocity.x, 0, _rb.velocity.z).normalized;
+
+        Vector3 flatLeft = Vector3.Cross(flatForward, Vector3.up).normalized;
+
+        var horizontalAngle = AngleUtil.AngleOffAroundAxis(flatLeft, -transform.right, flatForward);
+
+        var verticalAngle = AngleUtil.AngleOffAroundAxis(transform.forward, flatForward, -flatLeft);
+
+        return verticalAngle;
+    }
+
     public void SetAilerons(float value)
     {
         foreach (AirfoilController airfoil in ailerons)

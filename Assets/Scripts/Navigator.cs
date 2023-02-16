@@ -65,6 +65,6 @@ public class Navigator : MonoBehaviour
 
         var vectorToTarget = CurPoint.transform.position - transform.position;
 
-        return AngleUtil.AngleOffAroundAxis(vectorToTarget, _rb.velocity.normalized, Vector3.left);
+        return AngleUtil.AngleOffAroundAxis(vectorToTarget, Vector3.forward, Vector3.right);
     }
 }

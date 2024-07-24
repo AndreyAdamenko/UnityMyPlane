@@ -77,7 +77,7 @@ public class NavigatorInfo : MonoBehaviour
     {
         if (_navigator == null) return;
 
-        Distance = _navigator.GetDistance();
+        Distance = _navigator.GetDistance(_navigator.CurPoint);
         HorizontalAngle = _navigator.GetHorizontalAngle(_navigator.CurPoint);
         VerticalAngle = _navigator.GetVerticalAngle(_navigator.CurPoint);
         Title = _navigator.CurPoint == null ? "---" : _navigator.CurPoint.gameObject.name;

@@ -2122,7 +2122,7 @@ MonoBehaviour:
     I: 0.04
     D: 0.1
   elevatorPidParameters:
-    P: 0
+    P: 0.03
     I: 0
     D: 0
   CurModeTitle: Hold

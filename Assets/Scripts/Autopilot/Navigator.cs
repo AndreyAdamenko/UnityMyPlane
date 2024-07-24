@@ -42,10 +42,10 @@ public class Navigator : MonoBehaviour
         }
     }
 
-    public float GetDistance()
+    public float GetDistance(Transform pointTransform)
     {
-        if (CurPoint != null)
-            return (CurPoint.transform.position - _rb.transform.position).magnitude;
+        if (pointTransform != null)
+            return (pointTransform.position - _rb.transform.position).magnitude;
         else
             return float.MaxValue;
     }
@@ -66,5 +66,10 @@ public class Navigator : MonoBehaviour
         var vectorToTarget = CurPoint.transform.position - transform.position;
 
         return AngleUtil.AngleOffAroundAxis(vectorToTarget, Vector3.forward, Vector3.right);
+    }
+
+    public float GetTimeToNextPoint(float speed)
+    {
+        return GetDistance(CurPoint) / speed;
     }
 }

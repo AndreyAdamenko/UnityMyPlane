@@ -27,8 +27,12 @@ public class AirPlane : MonoBehaviour
 
     public float frontSpeed = 0f;
 
+    public float elevationSpeed = 0f;
+
     private float _lastRoll = 0f;
     private float _lastPitch = 0f;
+    private float _lastElevation = 0f;
+
 
     private void Awake()
     {
@@ -80,11 +84,14 @@ public class AirPlane : MonoBehaviour
         pitch = AngleUtil.AngleOffAroundAxis(transform.forward, flatForward, -flatLeft);
 
 
-        rollSpeed = roll - _lastRoll;
+        rollSpeed = (roll - _lastRoll) * Time.fixedDeltaTime;
         _lastRoll = roll;
 
-        pitchSpeed = pitch - _lastPitch;
+        pitchSpeed = (pitch - _lastPitch) * Time.fixedDeltaTime;
         _lastPitch = pitch;
+
+        elevationSpeed = (transform.position.y - _lastElevation) / Time.fixedDeltaTime;
+        _lastElevation = transform.position.y;
     }
 
     public float GetVelocityVerticalAngle()

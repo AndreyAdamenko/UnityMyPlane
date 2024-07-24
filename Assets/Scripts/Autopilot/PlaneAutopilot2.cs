@@ -96,17 +96,20 @@ public class PlaneAutopilot2 : MonoBehaviour
 
             needRoll = positive ? roll * -1 : roll;
 
-            needPitch = GetNeedPitch2();
+            needPitch = GetNeedPitch();
 
+            var rudder = GetRudder();
+
+            needRudders = positive ? rudder * -1 : rudder;
 
             //needRudders = positive ? rudder * -1 : rudder;
         }
 
-        airPlane.SetAilerons((-needRoll - airPlane.roll) / 40f);
+        airPlane.SetAilerons(-(needRoll + airPlane.roll) / 40f);
 
-        airPlane.SetElevators((-needPitch - airPlane.pitch) / 10f);
+        airPlane.SetElevators(-(needPitch + airPlane.pitch) / 10f);
 
-        //airPlane.SetRudders(-needRudders);
+        airPlane.SetRudders(-needRudders);
 
         curThrottle = GetThrottle();
 
@@ -134,47 +137,43 @@ public class PlaneAutopilot2 : MonoBehaviour
     private float GetNeedPitch()
     {
         if (CurMode == AutopilotMode.Turn)
-            return 8;
+            return 8f;
         else
         {
-            float elevatorError = navigator.CurPoint.position.y - transform.position.y;
+            var targetAngle = -navigator.GetVerticalAngle(navigator.CurPoint);
 
-            var pidValue = _elevatorPID.GetOutput(elevatorError, Time.fixedDeltaTime);
+            //var result = VelocityVerticalAngle - targetAngle;
 
-            return Mathf.Abs(pidValue) > 35 ? 35 * Mathf.Sign(pidValue) : pidValue;
-        }
-    }
+            var v = ((targetAngle* Mathf.Sign(VelocityVerticalAngle) - VelocityVerticalAngle) / 100f) ;
 
-    private float GetNeedPitch2()
-    {
-        if (CurMode == AutopilotMode.Turn)
-            return 8;
-        else
-        {
-            var planeVelocityVerticalAngle = airPlane.GetVelocityVerticalAngle();
-            var pointVerticalAngle = navigator.GetVerticalAngle(navigator.CurPoint);
-            
-            float angleError = (planeVelocityVerticalAngle - pointVerticalAngle);
+            return needPitch - v;
 
-            var pidValue = _elevatorPID.GetOutput(-angleError, Time.fixedDeltaTime);
+            if (VelocityVerticalAngle < targetAngle)
+                return needPitch + v;
+            else
+                return needPitch - v;
 
-            return Mathf.Abs(pidValue) > 35 ? 35 * Mathf.Sign(pidValue) : pidValue;
+            //var needElevationSpeed = (navigator.CurPoint.position.y - transform.position.y) / navigator.GetTimeToNextPoint(airPlane.frontSpeed);
 
-            //return navigator.GetVerticalAngle(navigator.CurPoint);
-        }
-    }
+            //var realElevationSpeed = airPlane.elevationSpeed;
 
-    private float GetNeedPitch3()
-    {
-        if (CurMode == AutopilotMode.Turn)
-            return 8;
-        else
-        {
-            float elevatorError = navigator.CurPoint.position.y - transform.position.y;
+            //var ToUp = Mathf.Sign(needElevationSpeed) > 0f;
+            //var ElevationUp = Mathf.Sign(realElevationSpeed) > 0f;
 
-            var pidValue = _elevatorPID.GetOutput(elevatorError, Time.fixedDeltaTime);
-
-            return Mathf.Abs(pidValue) > 35 ? 35 * Mathf.Sign(pidValue) : pidValue;
+            //if (ToUp)
+            //{
+            //    if (needElevationSpeed > realElevationSpeed)
+            //        return needPitch + 0.001f;
+            //    else
+            //        return needPitch - 0.001f;
+            //}
+            //else
+            //{
+            //    if (needElevationSpeed < realElevationSpeed)
+            //        return needPitch - 0.001f;
+            //    else
+            //        return needPitch + 0.001f;
+            //}
         }
     }
 
@@ -183,6 +182,14 @@ public class PlaneAutopilot2 : MonoBehaviour
         float speedError = needSpeed - airPlane.frontSpeed;
 
         return _enginePID.GetOutput(speedError, Time.fixedDeltaTime);
+    }
+
+    private float GetRudder()
+    {
+        if (CurMode == AutopilotMode.Turn)
+            return 8f;
+
+        return 0f;
     }
 
     public enum AutopilotMode

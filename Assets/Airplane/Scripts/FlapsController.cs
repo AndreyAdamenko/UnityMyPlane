@@ -42,7 +42,7 @@ public class FlapsController : MonoBehaviour
 
         FlapsChangeTo(positions[0]);
 
-        button.ChangeTo(positions[0]);
+        button?.ChangeTo(positions[0]);
     }
 
     private void LateUpdate()
@@ -90,7 +90,25 @@ public class FlapsController : MonoBehaviour
 
         FlapsChangeTo(curPosition);
 
-        button.ChangeTo(curPosition);
+        button?.ChangeTo(curPosition);
+    }
+
+    public void Full()
+    {
+        var last = positions.Last();
+
+        FlapsChangeTo(last);
+
+        button?.ChangeTo(last);
+    }
+
+    public void Up()
+    {
+        var first = positions.First();
+
+        FlapsChangeTo(first);
+
+        button?.ChangeTo(first);
     }
 
     private void FlapsChangeTo(FlapsPosition position)
